@@ -27,3 +27,5 @@ void printSymbolsValues (Elf64_Sym_Arr *symArr);
 Elf64_Sym_W_Name *findSymbolByAddress (Elf64_Sym_Arr *symArr, size_t address);
 
 void dumpMapToFile (std::map <std::pair<u_int64_t, u_int64_t>, int> &funcHashTable, Elf64_Sym_Arr *symArr);
+
+bool isPIC(const char *inputFileName);
