@@ -1,4 +1,4 @@
-#include "lib.hpp"
+#include "stringLib.h"
 
 size_t getFileSize (FILE *input) {
     assert (input);
@@ -79,8 +79,6 @@ void initializeArrOfPointers (char **ptrToStrArr, const size_t numbOfStrings, ch
     }
 }
 
-
-
 u_int64_t getHash (char *src) {
     assert (src);
 
@@ -92,5 +90,4 @@ u_int64_t getHash (char *src) {
 
     return hash;
 }
-
 
