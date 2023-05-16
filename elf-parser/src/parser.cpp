@@ -1,7 +1,50 @@
 #include "parser.hpp"
 
-uint8_t *createBuffer (const char *inputFileName, size_t *numberOfStrings) {
+bool Parser::isPIC () {
+    return pic;
+}
+
+char **Parser::getStrArray () {
+    return strArray;
+}
+
+Elf64_Sym_Arr *Parser::getSymArr () {
+    return symArr;
+}
+
+Parser::~Parser () {
+    delete[] strArray;
+    delete[] symArr->symbols;
+    delete symArr;
+    delete binary; 
+}
+
+Parser::Parser (const char *elfFileName, const char *addrsFile) {
+    assert (elfFileName);
+    assert (addrsFile);
+
+    binary = createBuffer (elfFileName);
+
+    addrs = reinterpret_cast<char *>(createBuffer (addrsFile, true));
+
+    strArray = new char *[numOfLinesInAddrs];
+    initializeArrOfPointers (strArray, numOfLinesInAddrs, addrs);
+
+    Elf64_Ehdr *elf = reinterpret_cast<Elf64_Ehdr *>(binary);
+    symArr = getSymbols (elf);
+
+    pic = elf->e_type == ET_DYN ? true : false;
+
+    if (pic) {
+        std::cout << "PIC!\n";
+        parseMapsFile();
+    }
+}
+
+uint8_t *Parser::createBuffer (const char *inputFileName, bool areLinesNeeded) {
     assert (inputFileName);
+
+    /// This is legacy. Please, do not touch.
 
     FILE *elfFile = fopen(inputFileName, "r");
     if (!elfFile) {
@@ -11,8 +54,8 @@ uint8_t *createBuffer (const char *inputFileName, size_t *numberOfStrings) {
 
     size_t fileSize = getFileSize (elfFile);
 
-    if (numberOfStrings != nullptr) {
-        *numberOfStrings = getNumberOfStrings(elfFile);
+    if (areLinesNeeded) {
+        numOfLinesInAddrs = getNumberOfStrings(elfFile);
     }
 
     uint8_t *binary = (uint8_t *)calloc (fileSize + 1, sizeof (uint8_t));
@@ -30,7 +73,11 @@ uint8_t *createBuffer (const char *inputFileName, size_t *numberOfStrings) {
     return binary;
 }
 
-Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader) {
+size_t Parser::getNumOfLines () {
+    return numOfLinesInAddrs;
+}
+
+Elf64_Sym_Arr *Parser::getSymbols (Elf64_Ehdr *elfHeader) {
     assert (elfHeader);
 
     uint8_t *binary = (uint8_t *)elfHeader;
@@ -40,11 +87,11 @@ Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader) {
 
     uint8_t *shStrSectPtr = binary + shStrSect->sh_offset;
 
-    int symTabIndex = -1;
-    int strTabIndex = -1;
+    std::optional<int> symTabIndex;
+    std::optional<int> strTabIndex;
 
     for (int index = 0; index < elfHeader->e_shnum; index++) {
-        if (strTabIndex != -1 && symTabIndex != -1) {
+        if (symTabIndex && strTabIndex) {
             break;
         }
 
@@ -59,31 +106,21 @@ Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader) {
         }
     }
 
-    if (symTabIndex == -1 || strTabIndex == -1) {
+    if (!symTabIndex || !strTabIndex) {
         std::cout << "File is corrupted!\n";
         return nullptr;
     }
 
-    Elf64_Shdr *symTabSect = &sections[symTabIndex];
+    Elf64_Shdr *symTabSect = &sections[*symTabIndex];
     size_t numberOfSymbols = symTabSect->sh_size / symTabSect->sh_entsize;
     Elf64_Sym *symbols = (Elf64_Sym *)(binary + symTabSect->sh_offset);
 
-    Elf64_Sym_Arr *symArray = (Elf64_Sym_Arr *)calloc (1, sizeof (Elf64_Sym_Arr));
-    if (!symArray) {
-        std::cout << "Unable to allocate memory!\n";
-        return nullptr;
-    }
-
-    symArray->symbols = (Elf64_Sym_W_Name *)calloc (numberOfSymbols, sizeof (Elf64_Sym_W_Name));
-    if (!symArray->symbols) {
-        std::cout << "Unable to allocate memory!\n";
-        return nullptr;
-    }
+    Elf64_Sym_Arr *symArray = new Elf64_Sym_Arr;
+    symArray->symbols = new Elf64_Sym_W_Name[numberOfSymbols];
 
     symArray->size = numberOfSymbols;
 
-    // Check if all works correctly.
-    Elf64_Shdr *strTabSect = &sections[strTabIndex];
+    Elf64_Shdr *strTabSect = &sections[*strTabIndex];
     char *strTabPtr = (char *)(binary + strTabSect->sh_offset);
 
     for (size_t i = 0; i < numberOfSymbols; i++) {
@@ -91,7 +128,6 @@ Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader) {
         symArray->symbols[i].symbol = &symbols[i];
         symArray->symbols[i].symName = strTabPtr + symbols[i].st_name;
     }
-
 
     return symArray;
 }
@@ -116,7 +152,7 @@ void printSymbolsValues (Elf64_Sym_Arr *symArr) {
     std::cout << '\n';
 }
 
-Elf64_Sym_W_Name *findSymbolByAddress (Elf64_Sym_Arr *symArr, size_t address) {
+Elf64_Sym_W_Name *Parser::findSymbolByAddress (size_t address) {
     assert (symArr);
 
     // size_t leftIndex = 0;
@@ -146,28 +182,38 @@ Elf64_Sym_W_Name *findSymbolByAddress (Elf64_Sym_Arr *symArr, size_t address) {
     return nullptr;
 }
 
-void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, char **strArray, size_t numberOfStrings, Elf64_Sym_Arr *symArray) {
-    assert (strArray);
+void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, Parser *psr) {
+    assert (psr);
 
-    for (size_t index = 0; index < numberOfStrings; index++) {
+    for (size_t index = 0; index < psr->getNumOfLines(); index++) {
 
         size_t addr1 = 0;
         size_t addr2 = 0;
         size_t numberOfCalls = 0;
 
-        int res = sscanf (strArray[index], "%lx %lx %lu", &addr1, &addr2, &numberOfCalls);
+        int res = sscanf (psr->getStrArray()[index], "%lx %lx %lu", &addr1, &addr2, &numberOfCalls);
         if (res < 3) {
-            std::cout << "Line number " << index << "is incorrect, skipping it.\n";
+            std::cout << "Line number " << index << " is incorrect, skipping it.\n";
         }
 
         std::cout << addr1 << " " << addr2 << '\n';
 
-        Elf64_Sym_W_Name *sym1 = findSymbolByAddress (symArray, addr1);
+        if (psr->isPIC()) {
+            std::optional<std::array<uint64_t, 3>> range1 = psr->findLowerBoundRange(addr1);
+            std::optional<std::array<uint64_t, 3>> range2 = psr->findLowerBoundRange(addr2);
+
+            addr1 -= ((*range1)[0] - (*range1)[2]) * psr->isPIC();
+            addr2 -= ((*range2)[0] - (*range2)[2]) * psr->isPIC();
+        }
+
+        std::cout << std::hex << addr1 << " " << addr2 << '\n';
+
+        Elf64_Sym_W_Name *sym1 = psr->findSymbolByAddress (addr1);
         if (!sym1) {
             std::cout << "Address " << addr1 <<" is out of range!\n";
             continue;
         }
-        Elf64_Sym_W_Name *sym2 = findSymbolByAddress (symArray, addr2);
+        Elf64_Sym_W_Name *sym2 = psr->findSymbolByAddress (addr2);
         if (!sym2) {
             std::cout << "Address "<< addr2 <<" is out of range!\n";
             continue;
@@ -187,8 +233,8 @@ void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, 
     }
 }
 
-void dumpMapToFile (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, Elf64_Sym_Arr *symArr) {
-    assert (symArr);
+void dumpMapToFile (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, Parser *psr) {
+    assert (psr);
 
     std::ofstream output;
     output.open("dump_dot.txt");
@@ -202,8 +248,8 @@ void dumpMapToFile (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable
         uint64_t addr2 = MO.first.second;
         int numberOfCalls = MO.second;
 
-        Elf64_Sym_W_Name *symName1 = findSymbolByAddress (symArr, addr1);
-        Elf64_Sym_W_Name *symName2 = findSymbolByAddress (symArr, addr2);
+        Elf64_Sym_W_Name *symName1 = psr->findSymbolByAddress (addr1);
+        Elf64_Sym_W_Name *symName2 = psr->findSymbolByAddress (addr2);
 
         if (uniqueSyms.find(symName1) == uniqueSyms.end()) {
             uniqueSyms.insert (symName1);
@@ -227,37 +273,36 @@ void dumpMapToFile (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable
     output.close();
 }
 
-bool isPIC(const char *inputFileName) {
-    assert (inputFileName);
-
-    // It is necessary for opening file itself, while executing 
-    // It leads to losing all printing informations to stdout in 
-    // user programm
-    std::fclose(stdout);
-
-    FILE *elfFile = fopen(inputFileName, "r");
-    if (!elfFile) {
-        std::cout << "Error: cannot open " << inputFileName << "\n";
-        return false;
+void Parser::parseMapsFile() {
+    FILE *mapFile = fopen("../maps.txt", "r");
+    if (!mapFile) {
+        std::cout << "Unable to open maps.txt!\n";
+        return;
     }
 
-    size_t fileSize = getFileSize (elfFile);
+    std::array<uint64_t, 3> Range;
+    char *permissions = new char[32];
+    char *fileName = new char[256];
 
-    uint8_t *binary = (uint8_t *)calloc (fileSize + 1, sizeof (uint8_t));
-    if (!binary) {
-        std::cout << "Unable to allocate memory!\n";
-        return false;
-    }
+    do {
+        fscanf(mapFile, "%lx-%lx %s %lx %*x:%*x %*x %s ", &Range[0], &Range[1],
+            permissions, &Range[2], fileName);
 
-    size_t numberOfReadBytes = fread (binary, sizeof (uint8_t), fileSize, elfFile);
-    if (numberOfReadBytes != fileSize) {
-        std::cout << "Incorrect file reading occured!\n";
-        return false;
-    }
+        if (!strcmp(permissions, "r-xp")) {
+            Ranges.push_back(Range);
+        }
+    } while (strcmp(fileName, "[heap]"));
 
-    auto *elfHeader = reinterpret_cast<Elf64_Ehdr*>(binary);
-    if (!elfHeader)
-        return false;
+    delete[] permissions;
+    delete[] fileName;
+}
 
-    return elfHeader->e_type == ET_DYN;
+std::optional<std::array<uint64_t, 3>>
+Parser::findLowerBoundRange(uint64_t Addr) const {
+  for (auto &Range : Ranges) {
+    if (Range[0] < Addr && Addr < Range[1])
+      return Range;
+  }
+
+  return std::nullopt;
 }

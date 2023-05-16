@@ -1,0 +1,39 @@
+56322e570000-56322e573000 r--p 00000000 103:08 2250928                   /home/voffk4/llvmHuawei/llvm-practice/llvm/lib/Transforms/CallGraph/my-tests/a
+56322e573000-56322e57f000 r-xp 00003000 103:08 2250928                   /home/voffk4/llvmHuawei/llvm-practice/llvm/lib/Transforms/CallGraph/my-tests/a
+56322e57f000-56322e586000 r--p 0000f000 103:08 2250928                   /home/voffk4/llvmHuawei/llvm-practice/llvm/lib/Transforms/CallGraph/my-tests/a
+56322e586000-56322e587000 r--p 00015000 103:08 2250928                   /home/voffk4/llvmHuawei/llvm-practice/llvm/lib/Transforms/CallGraph/my-tests/a
+56322e587000-56322e588000 rw-p 00016000 103:08 2250928                   /home/voffk4/llvmHuawei/llvm-practice/llvm/lib/Transforms/CallGraph/my-tests/a
+56322f526000-56322f547000 rw-p 00000000 00:00 0                          [heap]
+7f04da200000-7f04da228000 r--p 00000000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f04da228000-7f04da3bd000 r-xp 00028000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f04da3bd000-7f04da415000 r--p 001bd000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f04da415000-7f04da419000 r--p 00214000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f04da419000-7f04da41b000 rw-p 00218000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f04da41b000-7f04da428000 rw-p 00000000 00:00 0 
+7f04da4f9000-7f04da4fc000 r--p 00000000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f04da4fc000-7f04da513000 r-xp 00003000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f04da513000-7f04da517000 r--p 0001a000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f04da517000-7f04da518000 r--p 0001d000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f04da518000-7f04da519000 rw-p 0001e000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f04da519000-7f04da527000 r--p 00000000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f04da527000-7f04da5a3000 r-xp 0000e000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f04da5a3000-7f04da5fe000 r--p 0008a000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f04da5fe000-7f04da5ff000 r--p 000e4000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f04da5ff000-7f04da600000 rw-p 000e5000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f04da600000-7f04da69a000 r--p 00000000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f04da69a000-7f04da7aa000 r-xp 0009a000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f04da7aa000-7f04da819000 r--p 001aa000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f04da819000-7f04da824000 r--p 00218000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f04da824000-7f04da827000 rw-p 00223000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f04da827000-7f04da82a000 rw-p 00000000 00:00 0 
+7f04da842000-7f04da846000 rw-p 00000000 00:00 0 
+7f04da85e000-7f04da860000 rw-p 00000000 00:00 0 
+7f04da860000-7f04da862000 r--p 00000000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f04da862000-7f04da88c000 r-xp 00002000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f04da88c000-7f04da897000 r--p 0002c000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f04da898000-7f04da89a000 r--p 00037000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f04da89a000-7f04da89c000 rw-p 00039000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7ffd6e08d000-7ffd6e0ae000 rw-p 00000000 00:00 0                          [stack]
+7ffd6e18e000-7ffd6e192000 r--p 00000000 00:00 0                          [vvar]
+7ffd6e192000-7ffd6e194000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]
