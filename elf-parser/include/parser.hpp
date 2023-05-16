@@ -35,6 +35,8 @@ public:
     size_t getNumOfLines ();
     std::optional<std::array<uint64_t, 3>> findLowerBoundRange(uint64_t Addr) const;
 
+    void dumpRanges();
+
 private:
     uint8_t *createBuffer (const char *inputFileName, bool areLinesNeeded = false);
     Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader);

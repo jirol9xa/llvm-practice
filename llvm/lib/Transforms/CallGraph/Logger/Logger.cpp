@@ -24,19 +24,9 @@ private:
   /// value::value -- calls amnt
   std::unordered_map<int64_t, std::map<int64_t, int64_t>> Graph;
 
-  // The vector for representing ranges where the various code segments
-  // were loaded
-  // {range_begin, range_end, offset in elf src file}
-  // We use it in case of PIC
-  std::vector<std::array<uint64_t, 3>> Ranges;
-
   // shows is a file was compiled with -fPIC option
-  std::optional<bool> isPIC;
 
   void writeGraph() const;
-  void parseMapsFile();
-  std::optional<std::array<uint64_t, 3>>
-  findLowerBoundRange(uint64_t Addr) const;
 
   // Ctor will dump /proc/self/maps to the maps.txt files
   // It is necessary, because we support -fPIC flag
@@ -81,51 +71,11 @@ void GraphEditor::writeGraph() const {
       // Edge.second - map Children (<callee, calls_amnt>)
       // Child - pair <callee_addr, calls_amnt>
 
-      auto GetAddrInElf = [this](uint64_t Addr) {
-        if (auto Range = findLowerBoundRange(Addr))
-          Addr -= (*Range)[0] * (*isPIC) - (*Range)[2];
-        return Addr;
-      };
-
-      auto CallerAddr = GetAddrInElf(Edges.first);
-      auto CalleeAddr = GetAddrInElf(Child.first);
-
-      OutFile << std::hex << CallerAddr << ' ' << CalleeAddr << ' ' << std::dec
+      OutFile << std::hex << Edges.first << ' ' << Child.first << ' ' << std::dec
               << Child.second << '\n';
     }
   }
   OutFile.close();
-}
-
-void GraphEditor::parseMapsFile() {
-  FILE *MapFile = fopen("maps.txt", "r");
-  if (!MapFile)
-    return;
-
-  std::array<uint64_t, 3> Range;
-  char *Permissions = new char[32];
-  char *FileName = new char[256];
-
-  do {
-    fscanf(MapFile, "%lx-%lx %s %lx %*x:%*x %*lx %s ", &Range[0], &Range[1],
-           Permissions, &Range[2], FileName);
-
-    if (!strcmp(Permissions, "r-xp"))
-      Ranges.push_back(Range);
-  } while (strcmp(FileName, "[heap]"));
-
-  delete[] Permissions;
-  delete[] FileName;
-}
-
-std::optional<std::array<uint64_t, 3>>
-GraphEditor::findLowerBoundRange(uint64_t Addr) const {
-  for (auto &Range : Ranges) {
-    if (Range[0] < Addr && Addr < Range[1])
-      return Range;
-  }
-
-  return std::nullopt;
 }
 
 void Logger() {
