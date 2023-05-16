@@ -56,16 +56,16 @@ public:
     return Object;
   }
 
-  void addCall(int64_t *Caller, int64_t *Callee);
+  void addCall(int64_t Caller, int64_t Callee);
 
   // We will write to file in the destructor, because we want to do it
   // only one time
   ~GraphEditor() { writeGraph(); }
 };
 
-void GraphEditor::addCall(int64_t *Caller, int64_t *Callee) {
-  Graph[reinterpret_cast<uint64_t>(Caller)]
-       [reinterpret_cast<uint64_t>(Callee)]++;
+void GraphEditor::addCall(int64_t Caller, int64_t Callee) {
+  Graph[Caller]
+       [Callee]++;
 }
 
 void GraphEditor::writeGraph() const {
@@ -133,9 +133,6 @@ GraphEditor::findLowerBoundRange(uint64_t Addr) const {
 }
 
 void Logger() {
-  int64_t *callee_addr,
-      *caller_arrd; // Dummies. Replace them with return
-                    // values of llvm.returnaddress intrinsic.
   GraphEditor &graph = GraphEditor::getInstance();
-  graph.addCall(caller_arrd, callee_addr);
+  graph.addCall(reinterpret_cast<int64_t>(__builtin_return_address(1)), reinterpret_cast<int64_t>(__builtin_return_address(0)));
 }
