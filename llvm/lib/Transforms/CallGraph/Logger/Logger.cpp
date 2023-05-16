@@ -64,8 +64,7 @@ public:
 };
 
 void GraphEditor::addCall(int64_t Caller, int64_t Callee) {
-  Graph[Caller]
-       [Callee]++;
+  Graph[Caller][Callee]++;
 }
 
 void GraphEditor::writeGraph() const {
