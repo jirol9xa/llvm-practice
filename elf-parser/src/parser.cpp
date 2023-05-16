@@ -19,6 +19,12 @@ Parser::~Parser () {
     delete binary; 
 }
 
+void Parser::dumpRanges () {
+    for (size_t index = 0; index < Ranges.size(); index++) {
+        std::cout << std::hex << Ranges[index][0] << ' ' << Ranges[index][1] << ' ' << Ranges[index][2] << '\n'; 
+    }
+}
+
 Parser::Parser (const char *elfFileName, const char *addrsFile) {
     assert (elfFileName);
     assert (addrsFile);
@@ -196,11 +202,18 @@ void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, 
             std::cout << "Line number " << index << " is incorrect, skipping it.\n";
         }
 
-        std::cout << addr1 << " " << addr2 << '\n';
-
         if (psr->isPIC()) {
+            // std::cout << "before\n";
+            // psr->dumpRanges();
+
             std::optional<std::array<uint64_t, 3>> range1 = psr->findLowerBoundRange(addr1);
             std::optional<std::array<uint64_t, 3>> range2 = psr->findLowerBoundRange(addr2);
+
+            // std::cout << "after\n";
+            // psr->dumpRanges();
+
+            printf ("%lx %lx %lx - minus value\n", (*range1)[0], (*range1)[2], (*range1)[0] - (*range1)[2]);
+            printf ("%lx %lx %lx - minus value\n", (*range2)[0], (*range2)[2], (*range2)[0] - (*range2)[2]);
 
             addr1 -= ((*range1)[0] - (*range1)[2]) * psr->isPIC();
             addr2 -= ((*range2)[0] - (*range2)[2]) * psr->isPIC();
