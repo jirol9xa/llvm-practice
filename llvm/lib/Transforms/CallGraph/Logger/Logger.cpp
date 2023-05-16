@@ -47,7 +47,7 @@ private:
     system(system_text.c_str());
 
     // Get Ranges and isPIC from maps.txt
-    parseMapsFile();
+    // parseMapsFile();
   };
 
 public:
@@ -109,10 +109,6 @@ void GraphEditor::parseMapsFile() {
   do {
     fscanf(MapFile, "%lx-%lx %s %lx %*x:%*x %*lx %s ", &Range[0], &Range[1],
            Permissions, &Range[2], FileName);
-    if (!isPIC)
-      isPIC = ::isPIC(FileName);
-
-    fprintf(stderr, "isPIC = %d\n", *isPIC);
 
     if (!strcmp(Permissions, "r-xp"))
       Ranges.push_back(Range);

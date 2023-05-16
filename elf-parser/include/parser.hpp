@@ -14,18 +14,37 @@ struct Elf64_Sym_Arr {
     size_t size;
 };
 
-uint8_t *createBuffer (const char *inputFileName, size_t *numberOfStrings = nullptr);
+class Parser {
+    Elf64_Sym_Arr *symArr;
+    char **strArray;
+    uint8_t *binary;
+    char *addrs;
+    size_t numOfLinesInAddrs;
 
-void fillHashMap (std::map <std::pair<uint64_t, u_int64_t>, int> &funcHashTable, char **strArray, size_t numberOfStrings, Elf64_Sym_Arr *symArray);
+    std::vector<std::array<uint64_t, 3>> Ranges;
 
-Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader);
+    bool pic;
+
+public:
+    Parser (const char *elfFileName, const char *addrsFile);
+    ~Parser ();
+    Elf64_Sym_W_Name *findSymbolByAddress (size_t address);
+    Elf64_Sym_Arr *getSymArr ();
+    char **getStrArray ();
+    bool isPIC();
+    size_t getNumOfLines ();
+    std::optional<std::array<uint64_t, 3>> findLowerBoundRange(uint64_t Addr) const;
+
+private:
+    uint8_t *createBuffer (const char *inputFileName, bool areLinesNeeded = false);
+    Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader);
+    void parseMapsFile();
+};
+
+void fillHashMap (std::map <std::pair<uint64_t, u_int64_t>, int> &funcHashTable, Parser *psr);
 
 int symbolComp (const void *symbol1, const void *symbol2);
 
 void printSymbolsValues (Elf64_Sym_Arr *symArr);
 
-Elf64_Sym_W_Name *findSymbolByAddress (Elf64_Sym_Arr *symArr, size_t address);
-
-void dumpMapToFile (std::map <std::pair<u_int64_t, u_int64_t>, int> &funcHashTable, Elf64_Sym_Arr *symArr);
-
-bool isPIC(const char *inputFileName);
+void dumpMapToFile (std::map <std::pair<u_int64_t, u_int64_t>, int> &funcHashTable, Parser *psr);

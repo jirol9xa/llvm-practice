@@ -2,46 +2,60 @@
 #include "parser.hpp"
 
 int main (int argc, char *argv[]) {
-    if (argc < 2) {
+    if (argc < 3) {
         std::cout << "Error: missing file name!\n";
         return -1;
     }
 
-    uint8_t *binary = createBuffer (argv[1]);
-    if (!binary) {
-        return -1;
-    }
+    Parser psr(argv[1], argv[2]);
 
-    Elf64_Ehdr *elfHeader = (Elf64_Ehdr *)binary;
-    Elf64_Sym_Arr *symbolArr = getSymbols(elfHeader);
-    if (!symbolArr) {
-        return -1;
-    }
+    // printSymbolsValues (psr.getSymArr());
+    qsort ((void *)psr.getSymArr()->symbols, psr.getSymArr()->size, sizeof (Elf64_Sym_W_Name), symbolComp);
+    // printSymbolsValues (psr.getSymArr());
 
-    // printSymbolsValues (symbolArr);
-    qsort ((void *)symbolArr->symbols, symbolArr->size, sizeof (Elf64_Sym_W_Name), symbolComp);
-    // printSymbolsValues (symbolArr);
+    std::map <std::pair<uint64_t, uint64_t>, int> funcHashTable;
 
-    size_t numberOfStrings = 0;
-    char *addrs = (char *)createBuffer (argv[2], &numberOfStrings);
-    if (!addrs) {
-        return -1;
-    }
+    std::cout << "I am here!1\n"; 
+    fillHashMap (funcHashTable, &psr);
 
-    std::cout << symbolArr->size << '\n';
+    std::cout << "I am here2!\n";
+    dumpMapToFile (funcHashTable, &psr);
 
-    std::cout << numberOfStrings << std::endl;
+    // uint8_t *binary = createBuffer (argv[1]);
+    // if (!binary) {
+    //     return -1;
+    // }
 
-    std::map <std::pair<u_int64_t, u_int64_t>, int> funcHashTable; 
-    char **strArray = new char *[numberOfStrings];
-    initializeArrOfPointers (strArray, numberOfStrings, addrs);
+    // Elf64_Ehdr *elfHeader = (Elf64_Ehdr *)binary;
+    // Elf64_Sym_Arr *symbolArr = getSymbols(elfHeader);
+    // if (!symbolArr) {
+    //     return -1;
+    // }
 
-    for (size_t i = 0; i < numberOfStrings; i++) {
-        std::cout << strArray[i] << '\n';
-    }
+    // // printSymbolsValues (symbolArr);
+    // qsort ((void *)symbolArr->symbols, symbolArr->size, sizeof (Elf64_Sym_W_Name), symbolComp);
+    // // printSymbolsValues (symbolArr);
 
-    fillHashMap (funcHashTable, strArray, numberOfStrings, symbolArr);
-    dumpMapToFile (funcHashTable, symbolArr);
+    // size_t numberOfStrings = 0;
+    // char *addrs = (char *)createBuffer (argv[2], &numberOfStrings);
+    // if (!addrs) {
+    //     return -1;
+    // }
+
+    // std::cout << symbolArr->size << '\n';
+
+    // std::cout << numberOfStrings << std::endl;
+
+    // std::map <std::pair<u_int64_t, u_int64_t>, int> funcHashTable; 
+    // char **strArray = new char *[numberOfStrings];
+    // initializeArrOfPointers (strArray, numberOfStrings, addrs);
+
+    // for (size_t i = 0; i < numberOfStrings; i++) {
+    //     std::cout << strArray[i] << '\n';
+    // }
+
+    // fillHashMap (funcHashTable, strArray, numberOfStrings, symbolArr);
+    // dumpMapToFile (funcHashTable, symbolArr);
 
     return 0;
 }

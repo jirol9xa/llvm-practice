@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 set (INCLUDEDIR include/)
 set (SRCDIR src/)
 
-SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -g -ggdb3")
+SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -g -ggdb3 -std=c++17")
 
 project(CallGraph)
 

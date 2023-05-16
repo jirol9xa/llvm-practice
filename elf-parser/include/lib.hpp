@@ -7,6 +7,9 @@
 #include <map>
 #include <unordered_set>
 #include <fstream>
+#include <optional>
+#include <vector>
+#include <array>
 
 size_t getFileSize (FILE *input);
 
