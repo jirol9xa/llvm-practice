@@ -42,7 +42,6 @@ Parser::Parser (const char *elfFileName, const char *addrsFile, const char *maps
     pic = elf->e_type == ET_DYN ? true : false;
 
     if (pic) {
-        std::cout << "PIC!\n";
         parseMapsFile(mapsFile);
     }
 }
@@ -130,7 +129,6 @@ Elf64_Sym_Arr *Parser::getSymbols (Elf64_Ehdr *elfHeader) {
     char *strTabPtr = (char *)(binary + strTabSect->sh_offset);
 
     for (size_t i = 0; i < numberOfSymbols; i++) {
-        // std::cout << symbols[i].st_value << "       " << strTabPtr + symbols[i].st_name << '\n';
         symArray->symbols[i].symbol = &symbols[i];
         symArray->symbols[i].symName = strTabPtr + symbols[i].st_name;
     }
@@ -203,23 +201,16 @@ void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, 
         }
 
         if (psr->isPIC()) {
-            // std::cout << "before\n";
-            // psr->dumpRanges();
-
             std::optional<std::array<uint64_t, 3>> range1 = psr->findLowerBoundRange(addr1);
             std::optional<std::array<uint64_t, 3>> range2 = psr->findLowerBoundRange(addr2);
 
-            // std::cout << "after\n";
-            // psr->dumpRanges();
-
-            printf ("%lx %lx %lx - minus value\n", (*range1)[0], (*range1)[2], (*range1)[0] - (*range1)[2]);
-            printf ("%lx %lx %lx - minus value\n", (*range2)[0], (*range2)[2], (*range2)[0] - (*range2)[2]);
-
             addr1 -= ((*range1)[0] - (*range1)[2]) * psr->isPIC();
             addr2 -= ((*range2)[0] - (*range2)[2]) * psr->isPIC();
-        }
 
-        std::cout << std::hex << addr1 << " " << addr2 << '\n';
+            if (addr1 == addr2) {
+                continue;
+            }
+        }
 
         Elf64_Sym_W_Name *sym1 = psr->findSymbolByAddress (addr1);
         if (!sym1) {
@@ -250,7 +241,7 @@ void dumpMapToFile (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable
     assert (psr);
 
     std::ofstream output;
-    output.open("dump_dot.txt");
+    output.open("dump.dot");
 
     std::unordered_set<Elf64_Sym_W_Name *> uniqueSyms;
 
@@ -279,8 +270,6 @@ void dumpMapToFile (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable
         output << SO->symbol->st_value << "[fillcolor=cyan, style=\"filled\", label=\" " << SO->symName << "\"];\n";
     }
 
-    // 6702740936326542911 [fillcolor=cyan, style="filled", label=" free " ];
-
     output << "}\n";
     
     output.close();
@@ -304,7 +293,8 @@ void Parser::parseMapsFile(const char *mapsFile) {
         if (!strcmp(permissions, "r-xp")) {
             Ranges.push_back(Range);
         }
-    } while (strcmp(fileName, "[heap]"));
+
+    } while (strcmp(fileName, "[heap]") && *fileName == '/');
 
     delete[] permissions;
     delete[] fileName;
