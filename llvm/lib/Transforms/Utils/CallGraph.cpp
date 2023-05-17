@@ -29,7 +29,7 @@ namespace {
 
 PreservedAnalyses CallGraphPass::run(Module &M, ModuleAnalysisManager &AM) {
     // We don't instrument Logger file
-    if (M.getName().count("Logger.ll"))
+    if (M.getName().count("Logger"))
         return PreservedAnalyses::all();
 
     // Prepare builder for IR modification

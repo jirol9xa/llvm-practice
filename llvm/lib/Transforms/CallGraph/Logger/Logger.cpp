@@ -24,8 +24,6 @@ private:
   /// value::value -- calls amnt
   std::unordered_map<int64_t, std::map<int64_t, int64_t>> Graph;
 
-  // shows is a file was compiled with -fPIC option
-
   void writeGraph() const;
 
   // Ctor will dump /proc/self/maps to the maps.txt files
@@ -35,9 +33,6 @@ private:
     std::string system_text =
         "cat /proc/" + std::to_string(pid) + "/maps > maps.txt";
     system(system_text.c_str());
-
-    // Get Ranges and isPIC from maps.txt
-    // parseMapsFile();
   };
 
 public:
@@ -54,8 +49,7 @@ public:
 };
 
 void GraphEditor::addCall(int64_t Caller, int64_t Callee) {
-  Graph[Caller]
-       [Callee]++;
+  Graph[Caller][Callee]++;
 }
 
 void GraphEditor::writeGraph() const {
@@ -70,9 +64,8 @@ void GraphEditor::writeGraph() const {
       // Edge.first - addr of caller
       // Edge.second - map Children (<callee, calls_amnt>)
       // Child - pair <callee_addr, calls_amnt>
-
-      OutFile << std::hex << Edges.first << ' ' << Child.first << ' ' << std::dec
-              << Child.second << '\n';
+      OutFile << std::hex << Edges.first << ' ' << Child.first << ' '
+              << std::dec << Child.second << '\n';
     }
   }
   OutFile.close();
@@ -80,5 +73,6 @@ void GraphEditor::writeGraph() const {
 
 void Logger() {
   GraphEditor &graph = GraphEditor::getInstance();
-  graph.addCall(reinterpret_cast<int64_t>(__builtin_return_address(1)), reinterpret_cast<int64_t>(__builtin_return_address(0)));
+  graph.addCall(reinterpret_cast<int64_t>(__builtin_return_address(1)),
+                reinterpret_cast<int64_t>(__builtin_return_address(0)));
 }
