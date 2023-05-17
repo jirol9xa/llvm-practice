@@ -13,10 +13,8 @@ int main (int argc, char *argv[]) {
 
     std::map <std::pair<uint64_t, uint64_t>, int> funcHashTable;
 
-    std::cout << "I am here!1\n"; 
     fillHashMap (funcHashTable, &psr);
 
-    std::cout << "I am here2!\n";
     dumpMapToFile (funcHashTable, &psr);
 
     return 0;

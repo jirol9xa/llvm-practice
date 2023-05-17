@@ -37,6 +37,8 @@ public:
 
     void dumpRanges();
 
+    uint64_t truncSymbolAdress (uint64_t addr);
+
 private:
     uint8_t *createBuffer (const char *inputFileName, bool areLinesNeeded = false);
     Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader);
