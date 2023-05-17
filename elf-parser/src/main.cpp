@@ -7,7 +7,7 @@ int main (int argc, char *argv[]) {
         return -1;
     }
 
-    Parser psr(argv[1], argv[2]);
+    Parser psr(argv[1], argv[2], argv[3]);
 
     // printSymbolsValues (psr.getSymArr());
     qsort ((void *)psr.getSymArr()->symbols, psr.getSymArr()->size, sizeof (Elf64_Sym_W_Name), symbolComp);

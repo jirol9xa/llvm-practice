@@ -26,7 +26,7 @@ class Parser {
     bool pic;
 
 public:
-    Parser (const char *elfFileName, const char *addrsFile);
+    Parser (const char *elfFileName, const char *addrsFile, const char *mapsFile);
     ~Parser ();
     Elf64_Sym_W_Name *findSymbolByAddress (size_t address);
     Elf64_Sym_Arr *getSymArr ();
@@ -40,7 +40,7 @@ public:
 private:
     uint8_t *createBuffer (const char *inputFileName, bool areLinesNeeded = false);
     Elf64_Sym_Arr *getSymbols (Elf64_Ehdr *elfHeader);
-    void parseMapsFile();
+    void parseMapsFile(const char *mapsFile);
 };
 
 void fillHashMap (std::map <std::pair<uint64_t, u_int64_t>, int> &funcHashTable, Parser *psr);

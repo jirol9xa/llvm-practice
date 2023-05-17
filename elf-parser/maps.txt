@@ -1,3 +1,41 @@
+55eb8537a000-55eb8537d000 r--p 00000000 103:08 2540777                   /home/voffk4/trash/callgraph/a
+55eb8537d000-55eb85383000 r-xp 00003000 103:08 2540777                   /home/voffk4/trash/callgraph/a
+55eb85383000-55eb85387000 r--p 00009000 103:08 2540777                   /home/voffk4/trash/callgraph/a
+55eb85387000-55eb85388000 r--p 0000c000 103:08 2540777                   /home/voffk4/trash/callgraph/a
+55eb85388000-55eb85389000 rw-p 0000d000 103:08 2540777                   /home/voffk4/trash/callgraph/a
+55eb862cb000-55eb862ec000 rw-p 00000000 00:00 0                          [heap]
+7f7189600000-7f7189628000 r--p 00000000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f7189628000-7f71897bd000 r-xp 00028000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f71897bd000-7f7189815000 r--p 001bd000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f7189815000-7f7189819000 r--p 00214000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f7189819000-7f718981b000 rw-p 00218000 103:08 4200561                   /usr/lib/x86_64-linux-gnu/libc.so.6
+7f718981b000-7f7189828000 rw-p 00000000 00:00 0 
+7f7189919000-7f7189927000 r--p 00000000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f7189927000-7f71899a3000 r-xp 0000e000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f71899a3000-7f71899fe000 r--p 0008a000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f71899fe000-7f71899ff000 r--p 000e4000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f71899ff000-7f7189a00000 rw-p 000e5000 103:08 4201212                   /usr/lib/x86_64-linux-gnu/libm.so.6
+7f7189a00000-7f7189a9a000 r--p 00000000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f7189a9a000-7f7189baa000 r-xp 0009a000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f7189baa000-7f7189c19000 r--p 001aa000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f7189c19000-7f7189c24000 r--p 00218000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f7189c24000-7f7189c27000 rw-p 00223000 103:08 4194878                   /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30
+7f7189c27000-7f7189c2a000 rw-p 00000000 00:00 0 
+7f7189c4b000-7f7189c4f000 rw-p 00000000 00:00 0 
+7f7189c4f000-7f7189c52000 r--p 00000000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f7189c52000-7f7189c69000 r-xp 00003000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f7189c69000-7f7189c6d000 r--p 0001a000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f7189c6d000-7f7189c6e000 r--p 0001d000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f7189c6e000-7f7189c6f000 rw-p 0001e000 103:08 4194817                   /usr/lib/x86_64-linux-gnu/libgcc_s.so.1
+7f7189c87000-7f7189c89000 rw-p 00000000 00:00 0 
+7f7189c89000-7f7189c8b000 r--p 00000000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f7189c8b000-7f7189cb5000 r-xp 00002000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f7189cb5000-7f7189cc0000 r--p 0002c000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f7189cc1000-7f7189cc3000 r--p 00037000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7f7189cc3000-7f7189cc5000 rw-p 00039000 103:08 4200224                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+7fffa6043000-7fffa6064000 rw-p 00000000 00:00 0                          [stack]
+7fffa6180000-7fffa6184000 r--p 00000000 00:00 0                          [vvar]
+7fffa6184000-7fffa6186000 r-xp 00000000 00:00 0                          [vdso]
 559297765000-559297768000 r--p 00000000 103:08 2540777                   /home/voffk4/trash/callgraph/a
 559297768000-559297774000 r-xp 00003000 103:08 2540777                   /home/voffk4/trash/callgraph/a
 559297774000-55929777b000 r--p 0000f000 103:08 2540777                   /home/voffk4/trash/callgraph/a

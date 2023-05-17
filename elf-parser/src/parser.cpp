@@ -25,7 +25,7 @@ void Parser::dumpRanges () {
     }
 }
 
-Parser::Parser (const char *elfFileName, const char *addrsFile) {
+Parser::Parser (const char *elfFileName, const char *addrsFile, const char *mapsFile) {
     assert (elfFileName);
     assert (addrsFile);
 
@@ -43,7 +43,7 @@ Parser::Parser (const char *elfFileName, const char *addrsFile) {
 
     if (pic) {
         std::cout << "PIC!\n";
-        parseMapsFile();
+        parseMapsFile(mapsFile);
     }
 }
 
@@ -286,10 +286,10 @@ void dumpMapToFile (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable
     output.close();
 }
 
-void Parser::parseMapsFile() {
-    FILE *mapFile = fopen("../maps.txt", "r");
+void Parser::parseMapsFile(const char *mapsFile) {
+    FILE *mapFile = fopen(mapsFile, "r");
     if (!mapFile) {
-        std::cout << "Unable to open maps.txt!\n";
+        std::cout << "Unable to open " << mapsFile << '\n';
         return;
     }
 
