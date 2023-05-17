@@ -46,7 +46,7 @@ PreservedAnalyses CallGraphPass::run(Module &M, ModuleAnalysisManager &AM) {
     StringRef FuncName = F.getName();
     if (FuncName == LoggerFuncName || FuncName == "main" ||
         FuncName.count("_GLOBAL_") || FuncName.count("global_var") ||
-        FuncName.count("_ZN"))
+        FuncName.count("_ZN")) // FIXME: Need do not ignore _ZN for purpose of better analysis
       continue;
 
     Builder.SetInsertPointPastAllocas(&F);
