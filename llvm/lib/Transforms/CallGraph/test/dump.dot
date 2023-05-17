@@ -1,0 +1,4 @@
+digraph D {
+9264 -> 9264[label = "10"];
+9264[fillcolor=cyan, style="filled", label=" main"];
+}
