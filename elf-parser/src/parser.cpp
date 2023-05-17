@@ -186,6 +186,18 @@ Elf64_Sym_W_Name *Parser::findSymbolByAddress (size_t address) {
     return nullptr;
 }
 
+uint64_t Parser::truncSymbolAdress (uint64_t addr) {
+    assert (addr);
+
+    if (pic) {
+        std::optional<std::array<uint64_t, 3>> range1 = findLowerBoundRange(addr);
+
+        addr -= ((*range1)[0] - (*range1)[2]) * pic;
+    }
+
+    return addr;
+}
+
 void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, Parser *psr) {
     assert (psr);
 
@@ -214,16 +226,14 @@ void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, 
 
         Elf64_Sym_W_Name *sym1 = psr->findSymbolByAddress (addr1);
         if (!sym1) {
-            std::cout << "Address " << addr1 <<" is out of range!\n";
+            std::cout << "Address " << std::hex << addr1 <<" is out of range!\n";
             continue;
         }
         Elf64_Sym_W_Name *sym2 = psr->findSymbolByAddress (addr2);
         if (!sym2) {
-            std::cout << "Address "<< addr2 <<" is out of range!\n";
+            std::cout << "Address "<< std::hex << addr2 <<" is out of range!\n";
             continue;
         }
-
-        std::cout << sym1->symName << " " << sym2->symName << '\n';
 
         std::pair<uint64_t, uint64_t> funcPair{sym1->symbol->st_value, sym2->symbol->st_value};
 
@@ -241,6 +251,7 @@ void dumpMapToFile (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable
     assert (psr);
 
     std::ofstream output;
+    output.open("dump.dot");
     output.open("dump.dot");
 
     std::unordered_set<Elf64_Sym_W_Name *> uniqueSyms;
