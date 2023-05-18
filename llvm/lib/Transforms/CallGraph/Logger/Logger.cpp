@@ -71,6 +71,10 @@ void GraphEditor::writeGraph() const {
   OutFile.close();
 }
 
+// We will use linkonceodr, so we must say compiler not to inline the call
+// Or remove it, if compiler inline in any way
+void Logger() __attribute__((noinline));
+
 void Logger() {
   GraphEditor &graph = GraphEditor::getInstance();
   graph.addCall(reinterpret_cast<int64_t>(__builtin_return_address(1)),
