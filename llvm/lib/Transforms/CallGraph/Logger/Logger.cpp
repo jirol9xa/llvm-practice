@@ -1,8 +1,8 @@
 #include "../../../../../elf-parser/include/parser.hpp"
-#include <cstdio>
 #include <cassert>
-#include <unistd.h>
+#include <cstdio>
 #include <cstring>
+#include <unistd.h>
 
 /// Class for implementing Parsing and Changing dot file with graph
 /// Singleton implementation
@@ -12,9 +12,9 @@ private:
   // It is necessary, because we support -fPIC flag
   GraphEditor() {
     auto pid = getpid();
-    char *system_text = (char *) calloc(32, sizeof(char));
+    char *system_text = (char *)calloc(32, sizeof(char));
     if (!system_text)
-        return;
+      return;
 
     sprintf(system_text, "cat /proc/%d/maps > maps.txt", pid);
 
@@ -23,7 +23,7 @@ private:
 
     OutFile = fopen("Graph.txt", "w");
   };
-    
+
   FILE *OutFile;
 
 public:
@@ -34,9 +34,7 @@ public:
 
   void addCall(int64_t Caller, int64_t Callee);
 
-  ~GraphEditor() { 
-    fclose(OutFile);
-  }
+  ~GraphEditor() { fclose(OutFile); }
 };
 
 void GraphEditor::addCall(int64_t Caller, int64_t Callee) {

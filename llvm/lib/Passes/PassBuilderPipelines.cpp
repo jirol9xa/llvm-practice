@@ -1403,11 +1403,7 @@ PassBuilder::buildPerModuleDefaultPipeline(OptimizationLevel Level,
     return buildO0DefaultPipeline(Level, LTOPreLink);
 
   ModulePassManager MPM;
-
-  // FIXME: Add it to the end of pass pipeline
-  // Add calls to Logger func
-  MPM.addPass(CallGraphPass());
-
+  
   // Convert @llvm.global.annotations to !annotation metadata.
   MPM.addPass(Annotation2MetadataPass());
 
@@ -1439,6 +1435,9 @@ PassBuilder::buildPerModuleDefaultPipeline(OptimizationLevel Level,
 
   if (LTOPreLink)
     addRequiredLTOPreLinkPasses(MPM);
+  
+  // Add calls to Logger func
+  MPM.addPass(CallGraphPass());
 
   return MPM;
 }
@@ -1868,9 +1867,6 @@ ModulePassManager PassBuilder::buildO0DefaultPipeline(OptimizationLevel Level,
 
   ModulePassManager MPM;
   
-  // Add calls to Logger func
-  MPM.addPass(CallGraphPass());
-  
   // Perform pseudo probe instrumentation in O0 mode. This is for the
   // consistency between different build modes. For example, a LTO build can be
   // mixed with an O0 prelink and an O2 postlink. Loading a sample profile in
@@ -1969,7 +1965,10 @@ ModulePassManager PassBuilder::buildO0DefaultPipeline(OptimizationLevel Level,
     addRequiredLTOPreLinkPasses(MPM);
 
   MPM.addPass(createModuleToFunctionPassAdaptor(AnnotationRemarksPass()));
-
+ 
+  // Add calls to Logger func
+  MPM.addPass(CallGraphPass());
+  
   return MPM;
 }
 
