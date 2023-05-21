@@ -1404,6 +1404,7 @@ PassBuilder::buildPerModuleDefaultPipeline(OptimizationLevel Level,
 
   ModulePassManager MPM;
 
+  // FIXME: Add it to the end of pass pipeline
   // Add calls to Logger func
   MPM.addPass(CallGraphPass());
 

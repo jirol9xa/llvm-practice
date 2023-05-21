@@ -40,14 +40,12 @@ PreservedAnalyses CallGraphPass::run(Module &M, ModuleAnalysisManager &AM) {
   FunctionCallee CallLogFunc = getCallLogFunc(M);
 
   // Traverse all Functions
-  for (Function &F : M.functions()) {
+  for (Function &F : M) {
     if (F.empty())
       continue;
     StringRef FuncName = F.getName();
     if (FuncName == LoggerFuncName || FuncName == "main" ||
-        FuncName.count("_GLOBAL_") || FuncName.count("global_var") ||
-        FuncName.count("_ZN")) // FIXME: Need do not ignore _ZN for purpose of
-                               // better analysis
+        FuncName.count("_GLOBAL_") || FuncName.count("global_var")) 
       continue;
 
     Builder.SetInsertPointPastAllocas(&F);
@@ -74,7 +72,6 @@ void createDummyLogger(Module &M, IRBuilder<> &Builder) {
   // of profiing .cxx file with only global variables, because optimizer
   // can just cut off our dummy definition.
   Function *DummyLogger = Function::Create(
-      // FIXME: change to LinkOnceODR and test (work properly, i guess)
       getLoggerFuncType(M), Function::LinkOnceODRLinkage, LoggerFuncName, M);
 
   BasicBlock *BB = BasicBlock::Create(M.getContext(), "entry", DummyLogger);

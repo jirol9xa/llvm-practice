@@ -205,10 +205,9 @@ void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, 
 
         size_t addr1 = 0;
         size_t addr2 = 0;
-        size_t numberOfCalls = 0;
 
-        int res = sscanf (psr->getStrArray()[index], "%lx %lx %lu", &addr1, &addr2, &numberOfCalls);
-        if (res < 3) {
+        int res = sscanf (psr->getStrArray()[index], "%lx %lx ", &addr1, &addr2);
+        if (res < 2) {
             std::cout << "Line number " << index << " is incorrect, skipping it.\n";
         }
 
@@ -236,14 +235,7 @@ void fillHashMap (std::map <std::pair<uint64_t, uint64_t>, int> &funcHashTable, 
         }
 
         std::pair<uint64_t, uint64_t> funcPair{sym1->symbol->st_value, sym2->symbol->st_value};
-
-        auto isFound = funcHashTable.find(funcPair);
-        if (isFound == funcHashTable.end()) {
-            funcHashTable[funcPair] = numberOfCalls;
-        }
-        else {
-            funcHashTable[funcPair] += numberOfCalls;
-        }
+        funcHashTable[funcPair]++;
     }
 }
 
