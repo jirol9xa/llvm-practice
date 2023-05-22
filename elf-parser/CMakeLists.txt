@@ -4,7 +4,7 @@ set (INCLUDEDIR include/)
 set (SRCDIR src/)
 set (TESTDIR test/pic)
 
-SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -g -ggdb3 -std=c++17")
+SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -g -ggdb3 -std=c++17 -fsanitize=address,leak,undefined")
 
 project(CallGraph)
 add_executable(CallGraph ${SRCDIR}/main.cpp)

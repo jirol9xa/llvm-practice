@@ -10,7 +10,8 @@ Parser::~Parser() {
   delete[] strArray;
   delete[] symArr->symbols;
   delete symArr;
-  delete binary;
+  free(addrs);
+  free(binary);
 }
 
 void Parser::dumpRanges() {

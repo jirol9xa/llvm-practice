@@ -19,7 +19,7 @@ class Parser {
   char **strArray;
   uint8_t *binary;
   char *addrs;
-  size_t numOfLinesInAddrs;
+  size_t numOfLinesInAddrs = 0;
 
   std::vector<std::array<uint64_t, 3>> Ranges;
 
