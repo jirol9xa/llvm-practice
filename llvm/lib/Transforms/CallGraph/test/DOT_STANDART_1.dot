@@ -1,0 +1,5 @@
+digraph D {
+9264 -> 9232[label = "10"];
+9232[fillcolor=cyan, style="filled", label=" _Z3foov"];
+9264[fillcolor=cyan, style="filled", label=" main"];
+}

@@ -119,6 +119,7 @@
 #include "llvm/Transforms/Scalar/WarnMissedTransforms.h"
 #include "llvm/Transforms/Utils/AddDiscriminators.h"
 #include "llvm/Transforms/Utils/AssumeBundleBuilder.h"
+#include "llvm/Transforms/Utils/CallGraph.h"
 #include "llvm/Transforms/Utils/CanonicalizeAliases.h"
 #include "llvm/Transforms/Utils/CountVisits.h"
 #include "llvm/Transforms/Utils/InjectTLIMappings.h"
@@ -1402,7 +1403,7 @@ PassBuilder::buildPerModuleDefaultPipeline(OptimizationLevel Level,
     return buildO0DefaultPipeline(Level, LTOPreLink);
 
   ModulePassManager MPM;
-
+  
   // Convert @llvm.global.annotations to !annotation metadata.
   MPM.addPass(Annotation2MetadataPass());
 
@@ -1434,6 +1435,9 @@ PassBuilder::buildPerModuleDefaultPipeline(OptimizationLevel Level,
 
   if (LTOPreLink)
     addRequiredLTOPreLinkPasses(MPM);
+  
+  // Add calls to Logger func
+  MPM.addPass(CallGraphPass());
 
   return MPM;
 }
@@ -1862,7 +1866,7 @@ ModulePassManager PassBuilder::buildO0DefaultPipeline(OptimizationLevel Level,
          "buildO0DefaultPipeline should only be used with O0");
 
   ModulePassManager MPM;
-
+  
   // Perform pseudo probe instrumentation in O0 mode. This is for the
   // consistency between different build modes. For example, a LTO build can be
   // mixed with an O0 prelink and an O2 postlink. Loading a sample profile in
@@ -1961,7 +1965,10 @@ ModulePassManager PassBuilder::buildO0DefaultPipeline(OptimizationLevel Level,
     addRequiredLTOPreLinkPasses(MPM);
 
   MPM.addPass(createModuleToFunctionPassAdaptor(AnnotationRemarksPass()));
-
+ 
+  // Add calls to Logger func
+  MPM.addPass(CallGraphPass());
+  
   return MPM;
 }
 
