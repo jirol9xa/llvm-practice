@@ -23,7 +23,9 @@ private:
 
     OutFile = fopen("Graph.txt", "w");
   };
-
+  
+  ~GraphEditor() { fclose(OutFile); }
+  
   FILE *OutFile;
 
 public:
@@ -33,8 +35,6 @@ public:
   }
 
   void addCall(int64_t Caller, int64_t Callee);
-
-  ~GraphEditor() { fclose(OutFile); }
 };
 
 void GraphEditor::addCall(int64_t Caller, int64_t Callee) {
